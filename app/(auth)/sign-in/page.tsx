@@ -1,9 +1,14 @@
 // pages/sign-in.js
+import AuthForm from '@/components/AuthForm';
 import React from 'react';
 
 const SignIn = () => {
   return (
-    <div>SignIn</div>
+    <section className='flex-center size-full max-sm:px-6'>
+      {/* <form> */}
+        <AuthForm type="sign-in"/>
+      {/* </form> */}
+    </section>
   )
 }
 
