@@ -215,6 +215,6 @@ export const authFormSchema = (type : string) =>
     city: type === "sign-in" ? z.string().optional() : z.string().min(3),
 
     // both
-    email: z.string().email(),
     password: z.string().min(8),
+    email: z.string().email(),
   });

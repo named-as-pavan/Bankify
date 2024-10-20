@@ -2,37 +2,28 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import { infer, object, set, string, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/router";
-import SignUp from "@/app/(auth)/sign-up/page";
-import { signIn } from "@/lib/actions/user.actions";
+import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/actions/user.actions";
 // import { type } from "os";
 // import { render } from "react-dom";
 
 const AuthForm = ({ type }: { type: string }) => {
+  const router = useRouter();
 
-  const router  = useRouter();
   const [user, setUser] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const formSchema = authFormSchema(type)
+  const formSchema = authFormSchema(type);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,43 +34,30 @@ const AuthForm = ({ type }: { type: string }) => {
   });
 
   // 2. Define a submit handler.
-  const onSubmit = async(data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-   try {
-    //Appwrite and plaid token
-    if(type=== 'sign-up'){
+    try {
+      //Appwrite and plaid token
+      if (type === "sign-up") {
+        console.log("got");
+        const newUser = await signUp(data);
 
-      const newUser = await SignUp(data);
-
-
-      setUser(newUser);
-
-
-
-
-    }
-    if(type === 'sign-in'){
-
-      
-      const response = await signIn({
-        email: data.email,
-        password:data.password
-      })
-
-      if(response) router.push('/')
+        setUser(newUser);
       }
+      if (type === "sign-in") {
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
 
-
-
-
-   } catch (error) {
-    console.log(error)
-
-   } finally {
-    setIsLoading(false);
-   }
-    
-  }
+        if (response) router.push("/");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section className="auth-form">
@@ -116,21 +94,20 @@ const AuthForm = ({ type }: { type: string }) => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {type === "sign-up" && (
               <>
-              <div className="flex gap-4">
-
-                <CustomInput
-                  control={form.control}
-                  name={"firstName"}
-                  label={"First Name"}
-                  placeholder={"Enter your First Name"}
+                <div className="flex gap-4">
+                  <CustomInput
+                    control={form.control}
+                    name={"firstName"}
+                    label={"First Name"}
+                    placeholder={"Enter your First Name"}
                   />
-                <CustomInput
-                  control={form.control}
-                  name={"lastName"}
-                  label={"lastName"}
-                  placeholder={"Enter your Last Name"}
+                  <CustomInput
+                    control={form.control}
+                    name={"lastName"}
+                    label={"lastName"}
+                    placeholder={"Enter your Last Name"}
                   />
-                  </div>
+                </div>
                 <CustomInput
                   control={form.control}
                   name={"address1"}
@@ -144,32 +121,32 @@ const AuthForm = ({ type }: { type: string }) => {
                   placeholder={"Enter your specific City"}
                 />
                 <div className="flex gap-4">
-                <CustomInput
-                  control={form.control}
-                  name={"state"}
-                  label={"State"}
-                  placeholder={"Enter your State"}
-                />
-                 <CustomInput
-                  control={form.control}
-                  name={"postalCode"}
-                  label={"Postal Code"}
-                  placeholder={"Example : 577522"}
-                />
+                  <CustomInput
+                    control={form.control}
+                    name={"state"}
+                    label={"State"}
+                    placeholder={"Enter your State"}
+                  />
+                  <CustomInput
+                    control={form.control}
+                    name={"postalCode"}
+                    label={"Postal Code"}
+                    placeholder={"Example : 577522"}
+                  />
                 </div>
                 <div className="flex gap-4">
-                <CustomInput
-                  control={form.control}
-                  name={"dateOfBirth"}
-                  label={"Date of Birth"}
-                  placeholder={"YYYY-MM-DD"}
-                />
-                <CustomInput
-                  control={form.control}
-                  name={"ssn"}
-                  label={"SSN"}
-                  placeholder={"Example: 1234"}
-                />
+                  <CustomInput
+                    control={form.control}
+                    name={"dateOfBirth"}
+                    label={"Date of Birth"}
+                    placeholder={"YYYY-MM-DD"}
+                  />
+                  <CustomInput
+                    control={form.control}
+                    name={"ssn"}
+                    label={"SSN"}
+                    placeholder={"Example: 1234"}
+                  />
                 </div>
               </>
             )}
@@ -187,7 +164,6 @@ const AuthForm = ({ type }: { type: string }) => {
               placeholder={"Enter your Password"}
             />
 
-            {/* <CustomInput control={form.control} name={'username'} label={"Username"} placeholder={"Enter your Username"}/> */}
             <div className="flex flex-col gap-4">
               <Button type="submit" className="form-btn" disabled={isLoading}>
                 {isLoading ? (
@@ -220,4 +196,4 @@ const AuthForm = ({ type }: { type: string }) => {
   );
 };
 
-export default AuthForm
+export default AuthForm;
