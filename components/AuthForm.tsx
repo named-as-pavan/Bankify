@@ -13,6 +13,7 @@ import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn, signUp } from "@/lib/actions/user.actions";
+import PlaidLink from "./PlaidLink";
 // import { type } from "os";
 // import { render } from "react-dom";
 
@@ -36,14 +37,27 @@ const AuthForm = ({ type }: { type: string }) => {
   // 2. Define a submit handler.
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+
     try {
       //Appwrite and plaid token
       if (type === "sign-up") {
-        console.log("got");
-        const newUser = await signUp(data);
-
+        const userData = {
+          firstName: data.firstName!,
+          lastName: data.lastName!,
+          address1: data.address1!,
+          city: data.city!,
+          state: data.state!,
+          postalCode: data.postalCode!,
+          dateOfBirth: data.dateOfBirth!,
+          ssn: data.ssn!,
+          email: data.email,
+          password: data.password,
+        };
+        const newUser = await signUp(userData);
         setUser(newUser);
       }
+
+
       if (type === "sign-in") {
         const response = await signIn({
           email: data.email,
@@ -87,9 +101,9 @@ const AuthForm = ({ type }: { type: string }) => {
       </header>
       {user ? (
         <div className="flex flex-col gap-4">
-          {/* <PlaidLink></PlaidLink> */}
+          <PlaidLink user={user} variant={'primary'}/>
         </div>
-      ) : (
+       ): (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {type === "sign-up" && (

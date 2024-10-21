@@ -53,3 +53,6 @@ export default function RootLayout({
 
 
 // overflow app check it out
+// dwolla connects link between users with their bank accounts and transfer money to people and vice versa(online transactions)
+
+// plaid connects link between users with their bank accounts and transfer money to bank
