@@ -6,7 +6,11 @@ import {
   usePlaidLink,
 } from "react-plaid-link";
 import { useRouter } from "next/navigation";
-import { createLinkToken, exchangePublicToken } from "@/lib/actions/user.actions";
+import {
+  createLinkToken,
+  exchangePublicToken,
+} from "@/lib/actions/user.actions";
+import Image from "next/image";
 
 const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
   const router = useRouter();
@@ -15,19 +19,18 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
 
   useEffect(() => {
     const getLinkToken = async () => {
-      const data= await createLinkToken(user)
-      setToken(data?.linkToken)
+      const data = await createLinkToken(user);
+      setToken(data?.linkToken);
     };
     getLinkToken();
   }, [user]);
 
-  
   const onSuccess = useCallback<PlaidLinkOnSuccess>(
     async (public_token: string) => {
       await exchangePublicToken({
-          publicToken: public_token,
-          user,
-      })
+        publicToken: public_token,
+        user,
+      });
 
       router.push("/");
     },
@@ -51,9 +54,25 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
           Connect Bank
         </Button>
       ) : variant === "ghost" ? (
-        <Button>Connect Bank</Button>
+        <Button className="plaidlink-ghost" onClick={() => open()}>
+          <Image
+            src={"icons/connect-bank.svg"}
+            alt="connect bank"
+            width={24}
+            height={24}
+          />
+          <p className="text-[16px] font-semibold text-black-2">Connect Bank</p>
+        </Button>
       ) : (
-        <Button> Connect Bank</Button>
+        <Button className="plaidlink-default" onClick={() => open()}>
+          <Image
+            src={"icons/connect-bank.svg"}
+            alt="connect bank"
+            width={24}
+            height={24}
+          />
+          <p className="hidden text-[16px] font-semibold text-black-2 xl:block">Connect Bank</p>
+        </Button>
       )}
     </>
   );
